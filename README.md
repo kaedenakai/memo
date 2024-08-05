@@ -9,7 +9,7 @@ reizouko
 
 ## ③DEMO
 
-https://gs-kaede.sakura.ne.jp/kadai03/janken_rich/kadai/shinkeisuijaku.html
+https://gs-kaede.sakura.ne.jp/kadai04/memo/kadai/
 
 ## ④作ったアプリケーション用のIDまたはPasswordがある場合
 
