@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>reizouko</title>
+<script src="js/jquery-2.1.3.min.js"></script>
+<link rel="stylesheet" href="css/sample.css">
+</head>
+<body>
+<header>
+<h1 id="reizouko">reizouko</h1>
+</header>
+<main>
+    <div id="bun1">
+        <h6 id="bun1-1">食材を入力してください ^_^</h6>
+    </div>
+    <div class="form">
+        <div id="form1">
+            <h4 id="in1">食材</h4>
+            <input type="text" id="text1">
+        </div>
+        <div id="form2">
+            <h4 id="in2">個数・量</h4>
+            <input type="text" id="text2">
+        </div>
+        <div id="form3">
+            <h4 id="in3">memo</h4>
+            <textarea name="text3" id="text3"></textarea>
+        </div>
+    </div>
+
+    <div class="btn">
+        <button id="save">save</button>
+    </div>
+
+    <table id="list">
+        <thead>
+            <tr>
+                <th>select</th>
+                <th>食材</th>
+                <th>個数・量</th>
+                <th>memo</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- ここに追加データが挿入される -->
+        </tbody>
+    </table>
+    
+    
+
+    <div class="btn">
+        <button id="clear">clear</button>
+    </div>
+</main>
+
+<script>
+//1. Save ボタンクリックイベント
+$("#save").on("click", function() {
+    // タイムスタンプをキーとして使用
+    const timestamp = new Date().toISOString();
+    const key = timestamp;
+    const v1 = $("#text1").val();
+    const v2 = $("#text2").val();
+    const v3 = $("#text3").val();
+
+
+    // localStorage にデータを保存
+    localStorage.setItem(key, JSON.stringify({ v1, v2, v3 })); //jsonで配列にして格納
+
+    // テーブルに行を追加
+    const html = '<tr><td><input type="checkbox" class="select-row"></td><td>' + v1 + '</td><td>' + v2 + '</td><td>' + v3 + '</td></tr>';
+    $("#list tbody").append(html);
+
+    // 入力フィールドをクリア
+    $("#text1").val('');
+    $("#text2").val('');
+    $("#text3").val('');
+});
+
+// Clear ボタンクリックイベント
+$("#clear").on("click", function() {
+    // 選択されたレコードを削除
+    $("#list tbody input.select-row:checked").each(function() { //listのtbodyのうち、select-rowそれぞれに対し動作
+        const row = $(this).closest('tr'); //選択しているitemの行を取得
+        const v1 = row.find('td:eq(1)').text(); // tdタグの2番目にある食材の値をテキストで取得
+
+        // 全ての localStorage アイテムをチェックし、一致するものを削除
+        Object.keys(localStorage).forEach(function(storageKey) {
+            const item = JSON.parse(localStorage.getItem(storageKey));
+            if (item.v1 === v1) { // 食材の値が一致する場合
+                localStorage.removeItem(storageKey); // localStorage から削除
+            }
+        });
+
+        row.remove(); // テーブルから選択されている行を削除
+    });
+});
+
+// ページ読み込み時に保存データを取得して表示
+const keys = Object.keys(localStorage); //すべてのkeyを取得
+keys.sort(); //keyをソート＝時刻順
+keys.forEach(function(key) { //それぞれのkeyごとに動作
+    const value = JSON.parse(localStorage.getItem(key)); //keyのある行を取得
+    const html = '<tr><td><input type="checkbox" class="select-row"></td><td>' + value.v1 + '</td><td>' + value.v2 + '</td><td>' + value.v3 + '</td></tr>';
+    $("#list tbody").append(html);
+});
+
+</script>
+</body>
+</html>
